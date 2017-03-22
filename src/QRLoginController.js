@@ -27,7 +27,8 @@ function (Okta, Q, FormController, FormType) {
       <div class="">\
           <div class="qrcode-wrap">\
               <div data-se="qrcode-success" class="qrcode-success"></div>\
-              <img data-se="qrcode" class="qrcode-image" src="{{qrcode}}">\
+              <!-- <img data-se="qrcode" class="qrcode-image" src="/user/settings/factors/soft_token/qr?t={{now}}" --> \
+              <img data-se="qrcode" class="qrcode-image" src="{{qrcode}}"> \
           </div>\
       </div>\
     ',
@@ -39,8 +40,12 @@ function (Okta, Q, FormController, FormType) {
       }
     },
 
-    XgetTemplateData: function () {
-      
+    getTemplateData: function () {
+      var data = {now: new Date().getTime()};
+      var url = 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg';
+      data.qrcode = url;
+
+      return data;
     }
   });
 
@@ -69,17 +74,19 @@ function (Okta, Q, FormController, FormType) {
       
     },
 
-    fetchInitialData: function () {
-      var deferred = Q.defer();
-      var self = this;
-      var url = 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg';
+    XfetchInitialData: function () {
+      // var deferred = Q.defer();
+      // var self = this;
       
-      $.get('/api/qr-code').always(function () {
-        self.model.set('qrcode', url);
-        deferred.resolve();
-      });
+      // $.ajax({ url: 'user/settings/factors/soft_token/qr',
+      //          cache: false 
+      //        })
+      // .always(function () {
+      //   self.model.set('qrcode', url);
+      //   deferred.resolve();
+      // });
 
-      return deferred.promise;
+      // return deferred.promise;
     },
 
     postRender: function () {
@@ -90,7 +97,15 @@ function (Okta, Q, FormController, FormType) {
 
     poll: function () {
       var self = this;
-      this.model.fetch().then(function () {
+      
+      Q.delay(2000)
+      .then(function () {
+        self.form.clearErrors();
+      })
+      .then(function () {
+        return self.model.fetch();
+      })
+      .then(function () {
         /*
         IF succeed THEN 
         1. append successful callout to the page
@@ -100,9 +115,11 @@ function (Okta, Q, FormController, FormType) {
            this.options.appState.trigger('navigate', '/');
         ELSE recursively call this.poll
         */
+        self.poll();
         
-      }, function () {
-        console.error(arguments);
+      })
+      .fail(function () {
+        self.poll();
       })
     }
   });
