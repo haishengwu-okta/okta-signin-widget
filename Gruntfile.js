@@ -507,7 +507,9 @@ module.exports = function (grunt) {
       postBuildTasks.push('copy:target-to-dist');
       break;
     case 'dev':
+      preBuildTasks.push('retire');
       buildTasks.push('compass:build', 'exec:build-dev');
+      postBuildTasks.push('copy:target-to-dist');
       break;
     default:
       grunt.fail.fatal('Unknown target: ' + target);

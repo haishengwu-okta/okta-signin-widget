@@ -26,6 +26,7 @@ function (Okta, PrimaryAuthForm, SocialAuth, PrimaryAuthModel, Util, BaseLoginCo
 
   var Footer = Okta.View.extend({
     template: '\
+      <p><a href="#" class="link help js-qr-login">QR Login</a></p>\
       <a href="#" data-se="needhelp" class="link help js-help">\
       {{i18n code="needhelp" bundle="login"}}\
       </a>\
@@ -86,6 +87,10 @@ function (Okta, PrimaryAuthForm, SocialAuth, PrimaryAuthModel, Util, BaseLoginCo
         }
 
         this.toggleLinks(e);
+      },
+      'click .js-qr-login': function (e) {
+        e.preventDefault();
+        this.options.appState.trigger('navigate', 'signin/qr-login');
       },
       'click .js-forgot-password' : function (e) {
         e.preventDefault();

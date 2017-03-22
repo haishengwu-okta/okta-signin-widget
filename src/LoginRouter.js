@@ -47,6 +47,7 @@ define([
   'AccountUnlockedController',
   'UnlockEmailSentController',
   'RefreshAuthStateController',
+  'QRLoginController',
   'views/shared/SecurityBeacon',
   'views/shared/FactorBeacon'
 ],
@@ -85,6 +86,7 @@ function (BaseLoginRouter,
           AccountUnlockedController,
           UnlockEmailSentController,
           RefreshAuthStateController,
+          QRLoginController,
           SecurityBeacon,
           FactorBeacon) {
   return BaseLoginRouter.extend({
@@ -130,17 +132,24 @@ function (BaseLoginRouter,
       'signin/unlock': 'unlockAccount',
       'signin/account-unlocked': 'accountUnlocked',
       'signin/refresh-auth-state(/:token)': 'refreshAuthState',
+      'signin/qr-login': 'qrLogin',
       '*wildcard': 'primaryAuth'
     },
 
     // Route handlers that do not require a stateToken. If the page is refreshed,
     // these functions will not require a status call to refresh the stateToken.
     stateLessRouteHandlers: [
-      'primaryAuth', 'forgotPassword', 'recoveryLoading', 'unlockAccount', 'refreshAuthState'
+      'primaryAuth', 'forgotPassword', 'recoveryLoading', 'unlockAccount', 'refreshAuthState', 'qrLogin'
     ],
 
     primaryAuth: function () {
       this.render(PrimaryAuthController, { Beacon: SecurityBeacon });
+    },
+
+    qrLogin: function () {
+      this.render(QRLoginController, {
+        
+      });
     },
 
     verifyDuo: function () {
