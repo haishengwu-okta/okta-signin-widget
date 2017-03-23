@@ -52,18 +52,21 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
     template: '\
       <div class="">\
           <style> .qrcode-success .success-16-green::before {font-size: 180px; }\
-                  .qrcode-image { margin-left: -30px; }\
                   .qrcode-success { height: 200px; padding-left: 70px; margin: -20px 0 20px;} \
                   .qrcode-wrap { position: relative; }\
-                  .qrcode-logo { width: 64px; height: 64px; border-radius: 32px; position: absolute; top: 130px; left: 100px;}\
+                  .qrcode-image-wrap {width: 106px; height: 106px; overflow: hidden; position: absolute; top: 96px; left: 96px;}\
+                  .qrcode-image { margin: -12px; position: relative; width: 130px;}\
+                  .qrcode-logo { width: 300px; }\
           </style>\
           <div class="qrcode-wrap">\
               <div style="" data-se="qrcode-success" class="qrcode-success hide">\
                 <span class="icon icon-16 icon-only success-16-green"></span>\
               </div>\
-              <div class="qrcode-image-wrap">\
-                <img class="qrcode-logo" src="/assets/img/logos/okta-logo-2.png" /> \
-                <img data-se="qrcode" class="qrcode-image" src="/api/v1/sso/qr/generate?t={{qrtoken}}" /> \
+              <div class="qrcode-image-container">\
+                <div class="qrcode-image-wrap">\
+                  <img class="qrcode-image" src="/api/v1/sso/qr/generate?t={{qrtoken}}" />\
+                </div>\
+                <img class="qrcode-logo" src="/assets/img/logos/okta-logo-big.png" /> \
               </div>\
           </div>\
       </div>\
@@ -75,9 +78,6 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
 
     getTemplateData: function () {
       var data = {qrtoken: this.model.get('id')};
-      var url = 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg';
-      data.qrcode = url;
-
       return data;
     }
   });
@@ -132,7 +132,7 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
       })
       .then(function (res) {
         if (res.status === 'SUCCESS') {
-          self.$('.qrcode-image-wrap').hide("slow", function () {
+          self.$('.qrcode-image-container').hide("slow", function () {
             self.$('.qrcode-success').show("slow");
           });
           Util.redirect(sessionCookieRedirectTpl({
