@@ -19,7 +19,6 @@ build2
 .idea
 
 # These paths should be included in the published artifact, but not the repo
-/dist
 
 # @okta/i18n module specific ignores
 **/node_modules/@okta/i18n/**/*.*
