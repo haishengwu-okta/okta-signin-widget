@@ -51,22 +51,26 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
     className: 'clearfix',
     template: '\
       <div class="">\
-          <style> .qrcode-success .success-16-green::before {font-size: 180px; }</style>\
+          <style> .qrcode-success .success-16-green::before {font-size: 180px; }\
+                  .qrcode-image { margin-left: -30px; }\
+                  .qrcode-success { height: 200px; padding-left: 70px; margin: -20px 0 20px;} \
+                  .qrcode-wrap { position: relative; }\
+                  .qrcode-logo { width: 64px; height: 64px; border-radius: 32px; position: absolute; top: 130px; left: 100px;}\
+          </style>\
           <div class="qrcode-wrap">\
-              <div style="height: 200px; padding-left: 70px; margin: -20px 0 20px;" data-se="qrcode-success" class="qrcode-success hide">\
-              <span class="icon icon-16 icon-only success-16-green"></span>\
+              <div style="" data-se="qrcode-success" class="qrcode-success hide">\
+                <span class="icon icon-16 icon-only success-16-green"></span>\
               </div>\
-              <img data-se="qrcode" class="qrcode-image" src="/api/v1/sso/qr/generate?t={{qrtoken}}" > \
-              <!-- img data-se="qrcode" class="qrcode-image" src="{{qrcode}}" --> \
+              <div class="qrcode-image-wrap">\
+                <img class="qrcode-logo" src="/assets/img/logos/okta-logo-2.png" /> \
+                <img data-se="qrcode" class="qrcode-image" src="/api/v1/sso/qr/generate?t={{qrtoken}}" /> \
+              </div>\
           </div>\
       </div>\
     ',
 
     events: {
-      'click [data-type="refresh-qrcode"]': function (e) {
-        e.preventDefault();
-        // TODO
-      }
+      
     },
 
     getTemplateData: function () {
@@ -86,25 +90,13 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
           return '/api/v1/sso/qr/verify/' +  this.get('id');
         },
         props: {
-          id: 'string',
-          // status: 'string',
-          // stateToken: 'string',
-          // expiresAt: 'string',
-          // factorResult: 'string',
-          // factorResultMessage: 'string',
-          // relayState: 'string',
-          // recoveryToken: 'string',
-          // sessionToken: 'string',
-          // idToken: 'string',
-          // factorType: 'string',
-          // recoveryType: 'string',
+          id: 'string'
         }
       };
     },
 
     Form: {
-      //title: 'Okta QR Login',
-      subtitle: 'Scan the following from your okta mobile App',
+      subtitle: 'Scan the following from your Okta Mobile App',
       noCancelButton: true,
       className: 'barcode-scan',
 
@@ -131,7 +123,7 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
     poll: function () {
       var self = this;
 
-      Q.delay(2000)
+      Q.delay(1500)
       .then(function () {
         self.form.clearErrors();
       })
@@ -139,19 +131,8 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
         return $.get(self.model.url());
       })
       .then(function (res) {
-        /*
-        IF succeed THEN 
-        1. append successful callout to the page
-           slide away qr code and slide in successful icon
-        2. start to redirect to home page
-           delay 1 second
-           this.options.appState.trigger('navigate', '/');
-        ELSE recursively call this.poll
-        */
-
         if (res.status === 'SUCCESS') {
-          //self.appState.set('transaction', {data: res});
-          self.$('.qrcode-image').hide("slow", function () {
+          self.$('.qrcode-image-wrap').hide("slow", function () {
             self.$('.qrcode-success').show("slow");
           });
           Util.redirect(sessionCookieRedirectTpl({
@@ -164,9 +145,6 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
         }
       })
       .fail(function () {
-        // self.$('.qrcode-image').hide("slow", function () {
-        //   self.$('.qrcode-success').show("slow");
-        // });
       })
     }
   });
