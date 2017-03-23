@@ -53,11 +53,11 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
       <div class="">\
           <style> .qrcode-success .success-16-green::before {font-size: 180px; }</style>\
           <div class="qrcode-wrap">\
-              <div style="height: 200px; padding-left: 60px; margin: -20px 0 20px;" data-se="qrcode-success" class="qrcode-success hide">\
+              <div style="height: 200px; padding-left: 70px; margin: -20px 0 20px;" data-se="qrcode-success" class="qrcode-success hide">\
               <span class="icon icon-16 icon-only success-16-green"></span>\
               </div>\
-              <!-- <img data-se="qrcode" class="qrcode-image" src="/user/settings/factors/soft_token/qr?t={{qrtoken}}" --> \
-              <img data-se="qrcode" class="qrcode-image" src="{{qrcode}}"> \
+              <img data-se="qrcode" class="qrcode-image" src="/api/v1/authn/qr/generate?t={{qrtoken}}" > \
+              <!-- img data-se="qrcode" class="qrcode-image" src="{{qrcode}}" --> \
           </div>\
       </div>\
     ',
@@ -109,7 +109,12 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
 
       formChildren: [
         FormType.View({View: BarcodeView})
-      ]
+      ],
+
+      render: function () {
+        Okta.Form.prototype.render.apply(this, arguments);
+        this.$('.o-form-button-bar').remove();
+      }
     },
 
     Footer: Footer,
@@ -118,24 +123,7 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
       this.model.set('id', (new Date()).getTime());
     },
 
-    XfetchInitialData: function () {
-      // var deferred = Q.defer();
-      // var self = this;
-      
-      // $.ajax({ url: 'user/settings/factors/soft_token/qr',
-      //          cache: false 
-      //        })
-      // .always(function () {
-      //   self.model.set('qrcode', url);
-      //   deferred.resolve();
-      // });
-
-      // return deferred.promise;
-    },
-
-    postRender: function () {
-      this.$('.o-form-button-bar').addClass('hide');
-      
+    postRender: function () {      
       this.poll();
     },
 
@@ -168,17 +156,16 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
           Util.redirect(sessionCookieRedirectTpl({
             baseUrl: self.settings.get('baseUrl'),
             token: encodeURIComponent(res.sessionToken),
-            redirectUrl: encodeURIComponent(this.settings.get('redirectUrl') || 'http://haisheng.okta1.com:1802')
+            redirectUrl: encodeURIComponent(self.settings.get('redirectUrl') || 'http://haisheng.okta1.com:1802')
           }));
         } else {
           self.poll();
         }
       })
       .fail(function () {
-        //self.poll();
-        self.$('.qrcode-image').hide("slow", function () {
-          self.$('.qrcode-success').show("slow");
-        });
+        // self.$('.qrcode-image').hide("slow", function () {
+        //   self.$('.qrcode-success').show("slow");
+        // });
       })
     }
   });
