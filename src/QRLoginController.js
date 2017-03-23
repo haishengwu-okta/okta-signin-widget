@@ -56,7 +56,7 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
               <div style="height: 200px; padding-left: 70px; margin: -20px 0 20px;" data-se="qrcode-success" class="qrcode-success hide">\
               <span class="icon icon-16 icon-only success-16-green"></span>\
               </div>\
-              <img data-se="qrcode" class="qrcode-image" src="/api/v1/authn/qr/generate?t={{qrtoken}}" > \
+              <img data-se="qrcode" class="qrcode-image" src="/api/v1/sso/qr/generate?t={{qrtoken}}" > \
               <!-- img data-se="qrcode" class="qrcode-image" src="{{qrcode}}" --> \
           </div>\
       </div>\
@@ -87,23 +87,24 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
         },
         props: {
           id: 'string',
-          status: 'string',
-          stateToken: 'string',
-          expiresAt: 'string',
-          factorResult: 'string',
-          factorResultMessage: 'string',
-          relayState: 'string',
-          recoveryToken: 'string',
-          sessionToken: 'string',
-          idToken: 'string',
-          factorType: 'string',
-          recoveryType: 'string',
+          // status: 'string',
+          // stateToken: 'string',
+          // expiresAt: 'string',
+          // factorResult: 'string',
+          // factorResultMessage: 'string',
+          // relayState: 'string',
+          // recoveryToken: 'string',
+          // sessionToken: 'string',
+          // idToken: 'string',
+          // factorType: 'string',
+          // recoveryType: 'string',
         }
       };
     },
 
     Form: {
-      title: 'Okta QR Login',
+      //title: 'Okta QR Login',
+      subtitle: 'Scan the following from your okta mobile App',
       noCancelButton: true,
       className: 'barcode-scan',
 
@@ -135,7 +136,7 @@ function (Okta, Q, Enums, FormController, FormType, Util) {
         self.form.clearErrors();
       })
       .then(function () {
-        return self.model.fetch();
+        return $.get(self.model.url());
       })
       .then(function (res) {
         /*
